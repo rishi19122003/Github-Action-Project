@@ -41,8 +41,4 @@ jobs:
       env:
         CI: false
     
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: frontend-build
-        path: frontend/build
+   
