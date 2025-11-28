@@ -1,0 +1,577 @@
+{
+  "info": {
+    "name": "Course Reseller Platform API",
+    "description": "Complete API collection for testing the course reseller platform with wallet and commission system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "resellerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('adminToken', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@platform.com\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register Reseller",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('resellerToken', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Reseller\",\n  \"email\": \"reseller@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"9876543210\",\n  \"role\": \"RESELLER\",\n  \"razorpayAccountId\": \"acc_test123\",\n  \"bankDetails\": {\n    \"accountNumber\": \"1234567890\",\n    \"ifscCode\": \"SBIN0001234\",\n    \"accountHolderName\": \"John Reseller\",\n    \"bankName\": \"State Bank of India\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('studentToken', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"9876543211\",\n  \"role\": \"STUDENT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Courses",
+      "item": [
+        {
+          "name": "Create Course (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Complete Web Development Bootcamp\",\n  \"description\": \"Learn HTML, CSS, JavaScript, React, Node.js and more\",\n  \"price\": 2000,\n  \"adminCommission\": 500,\n  \"commissionType\": \"FIXED\",\n  \"category\": \"Web Development\",\n  \"duration\": \"40 hours\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            }
+          }
+        },
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Course",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/:courseId",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses", ":courseId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Wallet",
+      "item": [
+        {
+          "name": "Get Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{resellerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallet/balance",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "balance"]
+            }
+          }
+        },
+        {
+          "name": "Create Top-Up Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{resellerToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/topup/create-order",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "topup", "create-order"]
+            }
+          }
+        },
+        {
+          "name": "Manual Top-Up (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"RESELLER_USER_ID_HERE\",\n  \"amount\": 5000,\n  \"description\": \"Manual top-up for testing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/topup/manual",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "topup", "manual"]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{resellerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallet/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "transactions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Enrollment",
+      "item": [
+        {
+          "name": "Create Course Order (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\",\n  \"resellerId\": \"RESELLER_USER_ID_HERE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/enrollment/create-order",
+              "host": ["{{baseUrl}}"],
+              "path": ["enrollment", "create-order"]
+            }
+          }
+        },
+        {
+          "name": "Get My Enrollments (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/enrollment/my/enrollments",
+              "host": ["{{baseUrl}}"],
+              "path": ["enrollment", "my", "enrollments"]
+            }
+          }
+        },
+        {
+          "name": "Get Reseller Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{resellerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/enrollment/reseller/enrollments",
+              "host": ["{{baseUrl}}"],
+              "path": ["enrollment", "reseller", "enrollments"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Admin",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Pending Commissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/commissions/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "commissions", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Commission Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/commissions/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "commissions", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Reseller Breakdown",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/commissions/reseller-breakdown",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "commissions", "reseller-breakdown"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?role=RESELLER",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "RESELLER"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Payout (RazorpayX)",
+      "item": [
+        {
+          "name": "Create Payout (Admin Withdrawal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"bankDetails\": {\n    \"accountNumber\": \"1234567890\",\n    \"ifscCode\": \"SBIN0001234\",\n    \"accountHolderName\": \"Admin User\",\n    \"bankName\": \"State Bank of India\"\n  },\n  \"mode\": \"IMPS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payout/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["payout", "create"]
+            }
+          }
+        },
+        {
+          "name": "Get All Payouts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payout",
+              "host": ["{{baseUrl}}"],
+              "path": ["payout"]
+            }
+          }
+        },
+        {
+          "name": "Get Payout Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payout/:payoutId",
+              "host": ["{{baseUrl}}"],
+              "path": ["payout", ":payoutId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Webhook (Razorpay)",
+      "item": [
+        {
+          "name": "Simulate Payment Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-razorpay-signature",
+                "value": "test_signature",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_test123\",\n        \"order_id\": \"order_test123\",\n        \"amount\": 200000,\n        \"status\": \"captured\",\n        \"notes\": {\n          \"purpose\": \"COURSE_PURCHASE\"\n        }\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhook/razorpay",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhook", "razorpay"]
+            },
+            "description": "Note: This will fail signature verification. Use actual Razorpay webhooks in test mode."
+          }
+        }
+      ]
+    }
+  ]
+}
